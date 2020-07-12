@@ -1,7 +1,7 @@
 # easycron_go
 Easycron Go package
 
-# Instalation
+# Installation
 go get github.com/Senshi26/easycron_go
 
 
