@@ -73,6 +73,7 @@ Add() string
 Create_Cronjob_expression() string
 Edit()  string
 List() Cronjob_collecttion
+Delete() string
 }
 
 
