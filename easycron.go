@@ -106,7 +106,7 @@ func (E EasycronData) Edit(cronjob_name string,ce Cron_expression)string{
 
 }
 
-func (E EasycronData) Delete(cronjob_name string,ce Cron_expression)string{
+func (E EasycronData) Delete(cronjob_name string)string{
 	cronjobCollection := E.List()
 	var cronjob_id string
 	for i :=range cronjobCollection.CronJobs {
@@ -118,8 +118,7 @@ func (E EasycronData) Delete(cronjob_name string,ce Cron_expression)string{
 
 	}
 
-	resp, err := http.Get("https://www.easycron.com/rest/delete?" + "token=" +   E.Token + "&id=" + cronjob_id + "&cron_expression="+ ce.Create_Cronjob_Expression() + "&auth_user=" + E.Auth_user +
-		"&auth_pw=" + E.Auth_pw + "&group_id=" + E.Group_id + "&cron_job_name=" + E.Cron_job_name + "&url=" + E.Url )
+	resp, err := http.Get("https://www.easycron.com/rest/delete?" + "token=" +   E.Token + "&id=" + cronjob_id )
 	if err != nil {
 		log.Fatalln(err)
 	}
