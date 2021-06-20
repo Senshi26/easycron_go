@@ -10,27 +10,24 @@ import (
 )
 
 type EasycronData struct {
-
-	Url string
-	Auth_user string
-	Auth_pw string
-	Cron_job_name string
-	Group_id string
-	Token string
+	Url             string
+	Auth_user       string
+	Auth_pw         string
+	Cron_job_name   string
+	Group_id        string
+	Token           string
 	Cron_expression string
-
 }
 
 type Cron_expression struct {
-
-Minute int
-Hour int
-Day_month int
-Month int
-Day_week int
-Year int
-Recurring bool
-
+	Minute    int
+	Hour      int
+	Day_month int
+	Month     int
+	Day_week  int
+	Year      int
+	Recurring bool
+	Everyday  bool
 }
 
 type Cronjob_collecttion struct {
@@ -68,29 +65,27 @@ type Cronjob_collecttion struct {
 	Status string `json:"status"`
 }
 type Easycron interface {
-
-Add() string
-Create_Cronjob_expression() string
-Edit()  string
-List() Cronjob_collecttion
-Delete() string
+	Add() string
+	Create_Cronjob_expression() string
+	Edit() string
+	List() Cronjob_collecttion
+	Delete() string
 }
 
-
-func (E EasycronData) Edit(cronjob_name string,ce Cron_expression)string{
+func (E EasycronData) Edit(cronjob_name string, ce Cron_expression) string {
 	cronjobCollection := E.List()
 	var cronjob_id string
-	for i :=range cronjobCollection.CronJobs {
+	for i := range cronjobCollection.CronJobs {
 
-		if cronjobCollection.CronJobs[i].CronJobName == cronjob_name{
+		if cronjobCollection.CronJobs[i].CronJobName == cronjob_name {
 
 			cronjob_id = cronjobCollection.CronJobs[i].CronJobID
 		}
 
 	}
 
-	resp, err := http.Get("https://www.easycron.com/rest/edit?" + "token=" +   E.Token + "&id=" + cronjob_id + "&cron_expression="+ ce.Create_Cronjob_Expression() + "&auth_user=" + E.Auth_user +
-		"&auth_pw=" + E.Auth_pw + "&group_id=" + E.Group_id + "&cron_job_name=" + E.Cron_job_name + "&url=" + E.Url )
+	resp, err := http.Get("https://www.easycron.com/rest/edit?" + "token=" + E.Token + "&id=" + cronjob_id + "&cron_expression=" + ce.Create_Cronjob_Expression() + "&auth_user=" + E.Auth_user +
+		"&auth_pw=" + E.Auth_pw + "&group_id=" + E.Group_id + "&cron_job_name=" + E.Cron_job_name + "&url=" + E.Url)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -106,19 +101,19 @@ func (E EasycronData) Edit(cronjob_name string,ce Cron_expression)string{
 
 }
 
-func (E EasycronData) Delete(cronjob_name string)string{
+func (E EasycronData) Delete(cronjob_name string) string {
 	cronjobCollection := E.List()
 	var cronjob_id string
-	for i :=range cronjobCollection.CronJobs {
+	for i := range cronjobCollection.CronJobs {
 
-		if cronjobCollection.CronJobs[i].CronJobName == cronjob_name{
+		if cronjobCollection.CronJobs[i].CronJobName == cronjob_name {
 
 			cronjob_id = cronjobCollection.CronJobs[i].CronJobID
 		}
 
 	}
 
-	resp, err := http.Get("https://www.easycron.com/rest/delete?" + "token=" +   E.Token + "&id=" + cronjob_id )
+	resp, err := http.Get("https://www.easycron.com/rest/delete?" + "token=" + E.Token + "&id=" + cronjob_id)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -134,9 +129,9 @@ func (E EasycronData) Delete(cronjob_name string)string{
 
 }
 
-func (E EasycronData) List()Cronjob_collecttion{
+func (E EasycronData) List() Cronjob_collecttion {
 
-	resp, err := http.Get("https://www.easycron.com/rest/list?" + "token=" + E.Token  )
+	resp, err := http.Get("https://www.easycron.com/rest/list?" + "token=" + E.Token)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -148,10 +143,10 @@ func (E EasycronData) List()Cronjob_collecttion{
 
 	log.Println(string(body))
 
-	 var cronjobCollection Cronjob_collecttion
+	var cronjobCollection Cronjob_collecttion
 
-	err2 := json.Unmarshal(body,&cronjobCollection)
-	if err2 != nil{
+	err2 := json.Unmarshal(body, &cronjobCollection)
+	if err2 != nil {
 
 		log.Println(err)
 
@@ -159,11 +154,9 @@ func (E EasycronData) List()Cronjob_collecttion{
 
 	return cronjobCollection
 
-
-
 }
 
-func (C Cron_expression) Create_Cronjob_Expression()string{
+func (C Cron_expression) Create_Cronjob_Expression() string {
 
 	var expression string
 	switch C.Recurring {
@@ -171,20 +164,23 @@ func (C Cron_expression) Create_Cronjob_Expression()string{
 	case true:
 		if C.Day_week == 0 {
 
-			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " "  + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " "
+			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " "
 
+		} else if C.Everyday {
+
+			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + "*"
 		} else {
-			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" +  " " +  strconv.Itoa(C.Day_week)
+			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + strconv.Itoa(C.Day_week)
 
 		}
 
 	case false:
 		if C.Day_week == 0 {
 
-			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " "  + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " " + strconv.Itoa(C.Year)
+			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " " + strconv.Itoa(C.Year)
 
 		} else {
-			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " "  + "*" + " " + "*" + " " + strconv.Itoa(C.Day_week) + " " + strconv.Itoa(C.Year)
+			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + strconv.Itoa(C.Day_week) + " " + strconv.Itoa(C.Year)
 
 		}
 	}
@@ -193,11 +189,10 @@ func (C Cron_expression) Create_Cronjob_Expression()string{
 	return expression
 }
 
-func (E EasycronData) Add(ce Cron_expression)string   {
+func (E EasycronData) Add(ce Cron_expression) string {
 
-
-	resp, err := http.Get("https://www.easycron.com/rest/add?" + "token=" + E.Token + "&cron_expression="+ ce.Create_Cronjob_Expression() + "&auth_user=" + E.Auth_user +
-		"&auth_pw=" + E.Auth_pw + "&group_id=" + E.Group_id + "&cron_job_name=" + E.Cron_job_name + "&url=" + E.Url )
+	resp, err := http.Get("https://www.easycron.com/rest/add?" + "token=" + E.Token + "&cron_expression=" + ce.Create_Cronjob_Expression() + "&auth_user=" + E.Auth_user +
+		"&auth_pw=" + E.Auth_pw + "&group_id=" + E.Group_id + "&cron_job_name=" + E.Cron_job_name + "&url=" + E.Url)
 	if err != nil {
 		log.Fatalln(err)
 	}
