@@ -162,7 +162,7 @@ func (C Cron_expression) Create_Cronjob_Expression() string {
 	switch C.Recurring {
 
 	case true:
-		if C.Day_week == 0 {
+		if C.Day_week == 0 && !C.Everyday {
 
 			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " "
 
