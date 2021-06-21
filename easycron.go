@@ -167,15 +167,30 @@ func (C Cron_expression) Create_Cronjob_Expression() string {
 
 		case true:
 
-			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + "*"
+			if C.Day_week == 0 && C.Day_month != 0 {
+				expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " "
+
+			} else if C.Day_week != 0 && C.Day_month == 0 {
+
+				expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + strconv.Itoa(C.Day_week)
+
+			} else {
+
+				expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + "*"
+
+			}
 
 		case false:
 			if C.Day_week == 0 && C.Day_month != 0 {
 				expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " "
 
-			} else if C.Day_week == 0 && C.Day_month == 0 {
+			} else if C.Day_week != 0 && C.Day_month == 0 {
 
 				expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + strconv.Itoa(C.Day_week)
+
+			} else {
+
+				expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + "*"
 
 			}
 
