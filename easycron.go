@@ -162,19 +162,27 @@ func (C Cron_expression) Create_Cronjob_Expression() string {
 	switch C.Recurring {
 
 	case true:
-		if C.Day_week == 0 && !C.Everyday {
 
-			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " "
+		switch C.Everyday {
 
-		} else if C.Everyday {
+		case true:
 
 			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + "*"
-		} else {
-			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + strconv.Itoa(C.Day_week)
+
+		case false:
+			if C.Day_week == 0 && C.Day_month != 0 {
+				expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " "
+
+			} else if C.Day_week == 0 && C.Day_month == 0 {
+
+				expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + "*" + " " + "*" + " " + strconv.Itoa(C.Day_week)
+
+			}
 
 		}
 
 	case false:
+
 		if C.Day_week == 0 {
 
 			expression = strconv.Itoa(C.Minute) + " " + strconv.Itoa(C.Hour) + " " + strconv.Itoa(C.Day_month) + " " + strconv.Itoa(C.Month) + " " + "*" + " " + strconv.Itoa(C.Year)
